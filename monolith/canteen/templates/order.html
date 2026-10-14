@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}ออเดอร์ #{{ order.id }} · CanteenGo{% endblock %}
+{% block content %}
+<section style="grid-column: 1 / -1">
+  <h2>ออเดอร์ #{{ order.id }} · {{ order.customer_name }}</h2>
+  <div hx-get="{{ root }}/orders/{{ order.id }}/status" hx-trigger="every 5s" hx-swap="innerHTML">
+    {% include "partials/order_status.html" %}
+  </div>
+  <p><a href="{{ root }}/">← สั่งเพิ่ม</a></p>
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<section>
+  {% for shop, items in shops %}
+  <h2>{{ shop }}</h2>
+  {% for m in items %}
+  <div class="dish">
+    <span>{{ m.name_th }} <small>{{ m.price }} บาท</small></span>
+    <button hx-post="{{ root }}/cart/add" hx-vals='{"menu_id": {{ m.id }}}' hx-target="#cart" hx-swap="innerHTML">เพิ่ม</button>
+  </div>
+  {% endfor %}
+  {% endfor %}
+</section>
+<aside id="cart">{% include "partials/cart.html" %}</aside>
+{% endblock %}

@@ -1,0 +1,6 @@
+# ไม่ใส่ลง git: ค่าลับ และผลวัดโหลด
+.env
+loadtest/results/*
+!loadtest/results/.gitkeep
+__pycache__/
+*.pyc

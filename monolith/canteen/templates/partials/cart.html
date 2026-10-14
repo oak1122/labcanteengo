@@ -1,0 +1,12 @@
+<h2>ตะกร้าของคุณ</h2>
+{% if lines %}
+  {% for l in lines %}<div class="dish"><span>{{ l.name_th }} × {{ l.qty }}</span><span>{{ l.subtotal }} บาท</span></div>{% endfor %}
+  <p class="total">รวม {{ total }} บาท</p>
+  <form hx-post="{{ root }}/cart/checkout" action="{{ root }}/cart/checkout" method="post">
+    <input type="text" name="customer_name" placeholder="ชื่อผู้สั่ง" maxlength="60" required>
+    <p><button type="submit">สั่งอาหาร</button>
+       <button type="button" class="link" hx-post="{{ root }}/cart/clear" hx-target="#cart" hx-swap="innerHTML">ล้างตะกร้า</button></p>
+  </form>
+{% else %}
+  <p>ยังไม่มีรายการ กด "เพิ่ม" ที่เมนูได้เลย</p>
+{% endif %}

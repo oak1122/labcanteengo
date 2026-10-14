@@ -1,0 +1,15 @@
+# วิธีที่ 1: รันแบบก้อนเดียว  docker compose -f compose.monolith.yml up -d --build
+# พอร์ตที่เปิดบนเครื่องคุณคือ 8080 (เปลี่ยนได้: TEAM_PORT=8081 docker compose ... up -d ถ้าพอร์ตชน)
+services:
+  app:
+    build: ./monolith
+    environment:
+      ROOT_PATH: ${ROOT_PATH:-}
+    volumes:
+      - canteen-data:/data
+    ports:
+      - "${TEAM_PORT:-8080}:8000"
+    restart: unless-stopped
+
+volumes:
+  canteen-data: {}

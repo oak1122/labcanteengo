@@ -1,0 +1,15 @@
+{
+  "name": "CanteenGo Capstone",
+  "image": "mcr.microsoft.com/devcontainers/python:3.12",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "forwardPorts": [8080],
+  "portsAttributes": {
+    "8080": { "label": "CanteenGo (gateway / monolith)", "onAutoForward": "notify" }
+  },
+  "postCreateCommand": "docker compose version",
+  "customizations": {
+    "vscode": { "extensions": ["ms-azuretools.vscode-docker", "ms-python.python"] }
+  }
+}

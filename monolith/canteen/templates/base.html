@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CanteenGo{% endblock %}</title>
+  <link rel="stylesheet" href="{{ root }}/static/style.css">
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+</head>
+<body>
+  <header><a href="{{ root }}/" style="color:#fff;text-decoration:none">CanteenGo · สั่งอาหารโรงอาหาร</a></header>
+  <main>{% block content %}{% endblock %}</main>
+</body>
+</html>

@@ -1,0 +1,14 @@
+:root { --teal: #0f766e; --ink: #0f172a; --line: #e2e8f0; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: "Noto Sans Thai", system-ui, sans-serif; color: var(--ink); background: #f8fafc; }
+header { background: var(--teal); color: #fff; padding: .75rem 1rem; font-weight: 700; }
+main { max-width: 1000px; margin: 0 auto; padding: 1rem; display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 800px) { main { grid-template-columns: 2fr 1fr; } }
+section, aside { background: #fff; border: 1px solid var(--line); border-radius: .75rem; padding: 1rem; }
+h2 { margin: 0 0 .5rem; font-size: 1.05rem; }
+.dish { display: flex; justify-content: space-between; align-items: center; gap: .5rem; padding: .35rem 0; border-top: 1px solid var(--line); }
+button { background: var(--teal); color: #fff; border: 0; border-radius: .4rem; padding: .35rem .8rem; cursor: pointer; }
+button.link { background: none; color: var(--teal); text-decoration: underline; padding: 0; }
+input[type=text] { width: 100%; padding: .45rem; border: 1px solid #cbd5e1; border-radius: .4rem; }
+.total { font-weight: 700; margin: .5rem 0; }
+.status { font-size: 1.2rem; font-weight: 700; color: var(--teal); }

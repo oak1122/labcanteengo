@@ -1,0 +1,107 @@
+# วิธีที่ 2: แยกเป็นหลาย service  docker compose -f compose.split.yml up -d --build
+# ทุก service มี healthcheck และ restart policy (unless-stopped), ฐานข้อมูลแยกต่อ service และไม่เปิดพอร์ตฐานข้อมูลออกนอก network
+
+services:
+  gateway:
+    image: nginx:1.27-alpine
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "${TEAM_PORT:-8080}:80"   # พอร์ตเดียวที่เปิดออกนอก
+    restart: unless-stopped
+    depends_on:
+      menu:
+        condition: service_healthy
+      order:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  menu:
+    build: ./services/menu
+    environment: 
+      ROOT_PATH: ${ROOT_PATH:-}
+      DATABASE_URL: postgresql+psycopg://menu:menu@menu-db:5432/menu
+    restart: unless-stopped
+    depends_on:
+      menu-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  order:
+    build: ./services/order
+    environment:
+      ROOT_PATH: ${ROOT_PATH:-}
+      MENU_URL: http://menu:8000
+      DATABASE_URL: postgresql+psycopg://order:order@order-db:5432/order
+    restart: unless-stopped
+    depends_on:
+      order-db:
+        condition: service_healthy
+      menu:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/health')\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  menu-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: menu
+      POSTGRES_PASSWORD: menu
+      POSTGRES_DB: menu
+    volumes:
+      - menu-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U menu -d menu"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  order-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: order
+      POSTGRES_PASSWORD: order
+      POSTGRES_DB: order
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U order -d order"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+  # ชุดวัดโหลด (ไม่รันตอน up ปกติ): docker compose -f compose.split.yml --profile loadtest run --rm locust
+  locust:
+    profiles: [loadtest]
+    image: locustio/locust:2.32.5
+    volumes:
+      - ./loadtest:/mnt/locust
+    working_dir: /mnt/locust
+    command: >
+      -f /mnt/locust/locustfile.py --headless --host http://gateway
+      -u ${USERS:-20} -r ${SPAWN_RATE:-5} -t ${RUN_TIME:-1m}
+      --csv /mnt/locust/results/stats --only-summary
+    depends_on:
+      gateway: { condition: service_started }
+
+volumes:
+  menu-db-data:
+  order-db-data:

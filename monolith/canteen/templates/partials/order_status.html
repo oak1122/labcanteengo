@@ -1,0 +1,4 @@
+{% set labels = {"received": "รับออเดอร์แล้ว", "cooking": "กำลังทำ", "ready": "พร้อมรับ", "picked_up": "รับแล้ว"} %}
+<p class="status">{{ labels[order.status] }}</p>
+{% for i in order['items'] %}<div class="dish"><span>{{ i.name_th }} × {{ i.qty }}</span><span>{{ i.price * i.qty }} บาท</span></div>{% endfor %}
+<p class="total">รวม {{ order.total }} บาท</p>
